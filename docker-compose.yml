@@ -1,34 +1,13 @@
-version: '3.8'
-
 services:
-  php:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: php_app
-    ports:
-      - "8080:80"
-    volumes:
-      - ./php:/var/www/html
-    depends_on:
-      - db
-    environment:
-      - POSTGRES_HOST=db
-      - POSTGRES_DB=app_db
-      - POSTGRES_USER=app_user
-      - POSTGRES_PASSWORD=app_password
-
-  db:
-    image: postgres:14
-    container_name: postgres_db
-    environment:
-      - POSTGRES_DB=app_db
-      - POSTGRES_USER=app_user
-      - POSTGRES_PASSWORD=app_password
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-volumes:
-  pgdata:
+  - type: web
+    name: rendertest
+    env: docker
+    dockerfilePath: ./Dockerfile
+    repo: https://github.com/IBertoo/remote_repo  # Reemplaza con tu repo
+    region: Ohio  # Ajusta a tu región
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: catalogo
+          property: connectionString  # Render lo inyecta automáticamente, pero esto lo asegura
