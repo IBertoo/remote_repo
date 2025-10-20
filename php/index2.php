@@ -1,24 +1,32 @@
 <?php
-// En Render, usa DATABASE_URL para PostgreSQL
-if (getenv('DATABASE_URL')) {
-    $dbUrl = parse_url(getenv('DATABASE_URL'));
-    $host = $dbUrl['host'];
-    $port = $dbUrl['port'];
-    $dbname = ltrim($dbUrl['path'], '/');
-    $user = $dbUrl['user'];
-    $password = $dbUrl['pass'];
-} else {
-    // Fallback para desarrollo local
-    $host = getenv('POSTGRES_HOST') ?: 'db';
-    $port = 5432;
-    $dbname = getenv('POSTGRES_DB') ?: 'app_db';
-    $user = getenv('POSTGRES_USER') ?: 'app_user';
-    $password = getenv('POSTGRES_PASSWORD') ?: 'app_password';
+// Función para obtener parámetros de conexión
+function getDbParams() {
+    if ($dbUrl = getenv('DATABASE_URL')) {
+        // Entorno de Render
+        $url = parse_url($dbUrl);
+        return [
+            'host' => $url['host'],
+            'port' => $url['port'] ?? 5432,
+            'dbname' => ltrim($url['path'], '/'),
+            'user' => $url['user'],
+            'password' => $url['pass']
+        ];
+    } else {
+        // Entorno local (Docker Compose)
+        return [
+            'host' => getenv('POSTGRES_HOST') ?: 'db',
+            'port' => 5432,
+            'dbname' => getenv('POSTGRES_DB') ?: 'app_db',
+            'user' => getenv('POSTGRES_USER') ?: 'app_user',
+            'password' => getenv('POSTGRES_PASSWORD') ?: 'app_password'
+        ];
+    }
 }
 
 try {
-    $dsn = "pgsql:host=$host;port=$port;dbname=$dbname;";
-    $pdo = new PDO($dsn, $user, $password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $params = getDbParams();
+    $dsn = "pgsql:host={$params['host']};port={$params['port']};dbname={$params['dbname']};";
+    $pdo = new PDO($dsn, $params['user'], $params['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 
     // Crear tabla si no existe
     $pdo->exec("CREATE TABLE IF NOT EXISTS saludos (
@@ -36,7 +44,7 @@ try {
 
     echo "<h1>" . htmlspecialchars($result['mensaje']) . "</h1>";
     echo "<p>Guardado en: " . htmlspecialchars($result['created_at']) . "</p>";
-    echo "<p><em>Desplegado en Render.com</em></p>";
+    echo "<p><em>Desplegado en " . (getenv('DATABASE_URL') ? 'Render.com' : 'Local') . "</em></p>";
 
 } catch (PDOException $e) {
     echo "Error de conexión: " . htmlspecialchars($e->getMessage());
