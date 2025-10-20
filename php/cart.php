@@ -1,3 +1,53 @@
+<?php
+
+date_default_timezone_set('America/La_Paz');
+
+$token = getenv('BOT_TOKEN');
+$chat_id = getenv('BOT_ID');
+if (!$token) {
+    die("❌ BOT_TOKEN no definido.\n");
+}
+
+
+ $mensaje = "Hola soy un mensaje de Cart desde un sitio web.php";
+
+ // 🔹 Función: Enviar mensaje por Telegram (sin Markdown)
+function enviarTelegram($mensaje, $token, $chat_id) {
+    $url = "https://api.telegram.org/bot$token/sendMessage";
+    $data = [
+        'chat_id' => $chat_id,
+        'text'    => $mensaje,
+        // 'parse_mode' => 'HTML'
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $data
+    ]);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($http_code !== 200) {
+        error_log("❌ Error Telegram: $response");
+        return false;
+    }
+    return true;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //enviarTelegram("Linea1\nLinea2\nLinea3", $token, $chat_id);
+    if (enviarTelegram($mensaje, $token, $chat_id)) {
+    echo "✅ Mensaje enviado correctamente a Telegram.";
+    } else {
+        echo "❌ Error al enviar mensaje. Revisa el log.";
+        }
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
