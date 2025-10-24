@@ -1,15 +1,31 @@
-FROM php:8.1-apache
+# Usamos imagen oficial con Apache y PHP
+FROM php:8.2-apache
 
-# Instalar dependencias necesarias para pdo_pgsql
+# Instalar extensiones necesarias para PostgreSQL
 RUN apt-get update && apt-get install -y \
     libpq-dev \
-    && docker-php-ext-install pdo_pgsql pgsql
+    git \
+    unzip \
+    libfreetype6-dev \
+    libjpeg-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    && docker-php-ext-install pdo pdo_pgsql \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Habilitar el módulo de Apache rewrite (opcional, si lo necesitas)
-RUN a2enmod rewrite
+# Habilitar mod_rewrite si fuera necesario
+#RUN a2enmod rewrite
 
-# Copiar el código de la aplicación
-COPY ./php /var/www/html
+# Establecer dir de trabajo
+WORKDIR /var/www/html
 
-# Establecer permisos adecuados
-RUN chown -R www-data:www-data /var/www/html
+# Copiar composer si lo necesitas (opcional)
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copiar archivos de configuración de Apache si tuvieras (opcional)
+# COPY docker/php/vhost.conf /etc/apache2/sites-available/000-default.conf
+
+EXPOSE 80
+CMD ["apache2-foreground"]
