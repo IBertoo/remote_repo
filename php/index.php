@@ -43,6 +43,7 @@ try {
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
     echo "<h1>" . htmlspecialchars($result['mensaje']) . "</h1>";
+    echo "<h2> La Hora es: </h2>";
     echo "<p>Guardado en: " . htmlspecialchars($result['created_at']) . "</p>";
     echo "<p><em>Desplegado en " . (getenv('DATABASE_URL') ? 'Render.com' : 'Local') . "</em></p>";
 
