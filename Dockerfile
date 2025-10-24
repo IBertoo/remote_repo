@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y \
 
 # Establecer dir de trabajo
 WORKDIR /var/www/html
-
+COPY ./php /var/www/html
+RUN chown -R www-data:www-data /var/www/html
 # Copiar composer si lo necesitas (opcional)
 # RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
