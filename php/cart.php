@@ -260,9 +260,9 @@ $total = 0;
             $html = '<table border="1" cellpadding="4"><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Total</th></tr>';
 
         foreach ($cart as $item) {
-            $subtotal = $item['precio'] * $item['quantity'];
+            $subtotal = $item['price'] * $item['quantity'];
             $total += $subtotal;
-            $html .= "<tr><td>{$item['id_producto']}</td><td>{$item['nombre']}</td><td>{$item['quantity']} x \${$item['precio']}</td><td>= $" . number_format($subtotal, 2) . "</td></tr>";
+            $html .= "<tr><td>{$item['product_id']}</td><td>{$item['name']}</td><td>{$item['quantity']} x \${$item['price']}</td><td>= $" . number_format($subtotal, 2) . "</td></tr>";
         }
 
             $html .= '</table>';
