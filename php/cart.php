@@ -340,7 +340,7 @@ include __DIR__ . '/partials/header.php';
         <input type="email" class="form-control" id="customer_email" name="customer_email" placeholder="Ej. correo@ejemplo.com">
     </div>
     <!-- SITIO DE RECAPTCHA -->
-    <div class="mb-3 g-recaptcha" data-sitekey= <?htmlspecialchars($captchaSiteKey)  ?> ></div>
+    <div class="mb-3 g-recaptcha" data-sitekey="<?= htmlspecialchars(getenv('CAPTCHA_SITE_KEY')) ?>"></div>
 
     <button type="button" id="checkout-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" style="display: none;">Finalizar Compra</button>
     <a href="/index.php" class="btn btn-outline-secondary">Seguir comprando</a>
