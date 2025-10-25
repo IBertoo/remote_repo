@@ -10,6 +10,7 @@ if (!$token || !$chat_id) {
 require_once __DIR__ . '/db.php';
 // Si usas base de datos para otros procesos, mantenlo
 $pdo = db();
+$captchaSiteKey = getenv('CAPTCHA_SITE_KEY');
 
 
 // 🔹 Función: Convertir HTML a texto legible
@@ -339,7 +340,7 @@ include __DIR__ . '/partials/header.php';
         <input type="email" class="form-control" id="customer_email" name="customer_email" placeholder="Ej. correo@ejemplo.com">
     </div>
     <!-- SITIO DE RECAPTCHA -->
-    <div class="mb-3 g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+    <div class="mb-3 g-recaptcha" data-sitekey= <?htmlspecialchars($captchaSiteKey)  ?> ></div>
 
     <button type="button" id="checkout-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" style="display: none;">Finalizar Compra</button>
     <a href="/index.php" class="btn btn-outline-secondary">Seguir comprando</a>
