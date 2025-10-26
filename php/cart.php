@@ -262,7 +262,7 @@ $total = 0;
         foreach ($cart as $item) {
             $subtotal = $item['price'] * $item['quantity'];
             $total += $subtotal;
-            $html .= "<tr><td>{$item['product_id']}</td><td>{$item['name']}</td><td>{$item['quantity']} x \${$item['price']}</td><td>= $" . number_format($subtotal, 2) . "</td></tr>";
+            $html .= "<tr><td>{$item['id']}</td><td>{$item['name']}</td><td>{$item['quantity']} x \${$item['price']}</td><td>= $" . number_format($subtotal, 2) . "</td></tr>";
         }
 
             $html .= '</table>';
