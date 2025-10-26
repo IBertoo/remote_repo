@@ -1,36 +1,27 @@
+version: '3.9'
 services:
-  db:
-    image: postgres:15      # versión estable; cámbiala si quieres
-    container_name: pg_db
-    restart: unless-stopped
-    env_file: 
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      TZ: America/La_Paz
-      PGTZ: America/La_Paz
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./db_init:/docker-entrypoint-initdb.d:ro  # scripts init (solo se ejecutan la 1ra vez)
-    ports:
-      - "5432:5432"
-
   php:
     build:
       context: .
       dockerfile: ./Dockerfile
     env_file:
-      - .env
+    - .env
     container_name: php_app
-    restart: unless-stopped
     volumes:
-      - ./php:/var/www/html
-    depends_on:
-      - db
+    - ./php:/var/www/html
     ports:
-      - "8080:80"   # expone Apache/Nginx+PHP en el host: http://localhost:8080
+      - "8080:80"
 
-volumes:
-  db-data:
+  db:
+    image: postgres:16
+    container_name: pg_db
+    environment:
+      POSTGRES_DB: catalogo
+      POSTGRES_USER: catalogo_user
+      POSTGRES_PASSWORD: catalog_pass
+      TZ: America/La_Paz
+      PGTZ: America/La_Paz
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
