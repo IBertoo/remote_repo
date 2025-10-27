@@ -1,36 +1,38 @@
+version: '3.8'  # Especifica la versión de Docker Compose (3.8 es común para esta configuración)
+
 services:
-db:
-image: postgres:15 # versión estable; cámbiala si quieres
-container_name: pg_db
-restart: unless-stopped
-env_file: 
-- .env
-environment:
-POSTGRES_USER: ${POSTGRES_USER}
-POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-POSTGRES_DB: ${POSTGRES_DB}
-TZ: America/La_Paz
-PGTZ: America/La_Paz
-volumes:
-- db-data:/var/lib/postgresql/data
-- ./db_init:/docker-entrypoint-initdb.d:ro # scripts init (solo se ejecutan la 1ra vez)
-ports:
-- "5432:5432"
+  db:
+    image: postgres:15  # Versión estable de PostgreSQL; cámbiala si necesitas otra
+    container_name: pg_db
+    restart: unless-stopped
+    env_file:
+      - .env  # Carga variables de entorno desde el archivo .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: America/La_Paz
+      PGTZ: America/La_Paz
+    volumes:
+      - db-data:/var/lib/postgresql/data  # Persistencia de datos de PostgreSQL
+      - ./db_init:/docker-entrypoint-initdb.d:ro  # Scripts de inicialización (solo primera vez)
+    ports:
+      - "5432:5432"  # Expone el puerto de PostgreSQL
 
-php:
-build:
-context: .
-dockerfile: ./Dockerfile
-env_file:
-- .env
-container_name: php_app
-restart: unless-stopped
-volumes:
-- ./php:/var/www/html
-depends_on:
-- db
-ports:
-- "8080:80" # expone Apache/Nginx+PHP en el host: http://localhost:8080
+  php:
+    build:
+      context: .  # Directorio actual como contexto de build
+      dockerfile: ./Dockerfile  # Archivo Dockerfile para construir la imagen PHP
+    env_file:
+      - .env  # Carga variables de entorno desde el archivo .env
+    container_name: php_app
+    restart: unless-stopped
+    volumes:
+      - ./php:/var/www/html  # Monta el código PHP en el contenedor
+    depends_on:
+      - db  # Espera a que el servicio db esté listo
+    ports:
+      - "8080:80"  # Expone Apache/Nginx+PHP en http://localhost:8080
 
 volumes:
-db-data:
+  db-data:  # Volumen nombrado para persistencia de datos de PostgreSQL
