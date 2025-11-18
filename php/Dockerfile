@@ -20,6 +20,19 @@ RUN apt-get update && apt-get install -y \
 
 # Establecer dir de trabajo
 WORKDIR /var/www/html
+
+# =================================================================
+# AQUÍ VIENEN LOS CAMBIOS CLAVE PARA SUBIR ARCHIVOS GRANDES
+# =================================================================
+
+# 1. Sobrescribe directamente los valores de php.ini en una sola línea
+RUN echo "upload_max_filesize = 100M\n\
+post_max_size = 110M\n\
+memory_limit = 256M\n\
+max_execution_time = 600\n\
+max_input_time = 600\n\
+file_uploads = On" > /usr/local/etc/php/conf.d/uploads.ini
+
 COPY ./php /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 # Copiar composer si lo necesitas (opcional)
